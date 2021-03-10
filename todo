@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# List default path is ~/TODO
+list_path=~/TODO
+
+list_header="TODO:"
+
+first_line=$(head -n 1 $list_path)
+
+if [ $first_line != $list_header ]; then
+    sed -i "1i${list_header}" $list_path
+fi
+
+# Print current TODO list if no parameters are passed
+if [ $# -gt 0 ]; then
+    case $1 in
+        -a | --add )
+            shift
+
+            # Initial parameter
+            new_item=$1
+            shift
+
+            # Concat all remaining parameters
+            until [ $# -eq 0 ]; do
+                new_item+=" "
+                new_item+=$1
+                shift
+            done
+
+            # Formatting
+            list_item+=" - "
+            list_item+=$new_item
+            echo $list_item >> $list_path
+
+            echo "Added \"$new_item\" to the TODO list!"
+            ;;
+
+        -r | --remove )
+            shift
+            # Correct for header
+            remove_line=$(($1+1))
+
+            # Avoid deletion of header
+            if [ $1 -eq 1 ]; then
+                remove_line=$((remove_line+1))
+            fi
+
+            # Get length of TODO list
+            lines=$(cat $list_path | wc -l)
+
+            if [ $remove_line -gt $lines ]; then
+                remove_line=$lines
+            fi
+
+            # Print line to remove (in case the wrong one is deleted)
+            echo "Checked off:"
+            echo $(sed -n "${remove_line}p" $list_path)
+
+            # Generate new list without 
+            new_list=$(sed "${remove_line}d" $list_path)
+
+            echo $new_list > $list_path
+            ;;
+
+        * )
+            cat $list_path
+    esac
+
+else
+    cat $list_path
+fi
