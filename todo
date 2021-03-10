@@ -29,9 +29,8 @@ if [ $# -gt 0 ]; then
             done
 
             # Formatting
-            list_item+=" - "
-            list_item+=$new_item
-            echo $list_item >> $list_path
+            list_symbol=" -"
+            echo "${list_symbol} ${new_item}" >> $list_path
 
             echo "Added \"$new_item\" to the TODO list!"
             ;;
@@ -57,10 +56,10 @@ if [ $# -gt 0 ]; then
             echo "Checked off:"
             echo $(sed -n "${remove_line}p" $list_path)
 
-            # Generate new list without 
+            # Generate new list without line
             new_list=$(sed "${remove_line}d" $list_path)
 
-            echo $new_list > $list_path
+            printf $new_list > $list_path
             ;;
 
         * )
