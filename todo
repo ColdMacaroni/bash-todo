@@ -59,7 +59,7 @@ if [ $# -gt 0 ]; then
             # Generate new list without line
             new_list=$(sed "${remove_line}d" $list_path)
 
-            printf $new_list > $list_path
+            printf "%s\n" "$new_list" > $list_path
             ;;
 
         * )
